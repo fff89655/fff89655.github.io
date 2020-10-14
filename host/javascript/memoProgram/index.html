@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>W3.CSS Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+
+
+    <script src="../../../js/vue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet" />
+
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+
+
+    <!-- include summernote css/js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
+
+    <script src="./treeGrid.js"></script>
+    <link rel="stylesheet" href="treeNode.css" />
+    <style>
+        table{
+            border-collapse: collapse;
+        }
+        *{
+            box-sizing: border-box;
+        }
+        .menuItem{
+            padding:4px 8px;
+            cursor: pointer;
+        }
+        .menuItem:hover{
+            background-color: lightgray;
+        }
+        .dataItemTitle{
+            background-color: #40b9ef;
+            color:white;
+            border-radius: 5px;
+        }
+        .dataItemTitle .path{
+            display: inline-block;
+            padding:5px;
+        }
+        .dataListItem{
+            padding:10px;
+            border-top:3px solid #999;
+        }
+        .dataListItemHtmlDiv{
+            max-height:300px;
+            overflow:auto;
+            background-color: white;
+            border:1px solid #71c2e8;
+            border-radius: 5px;
+            padding:5px;
+        }
+        #recentDataDiv{
+            overflow: auto;
+            height: 97vh;
+            background-color:#f2fbff;
+        }
+        #loadingDiv{
+            position: absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            background-color: black;
+            opacity: 0.7;
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="width:100vw;height:100vh;">
+        <table style="width:100%;height:100%;">
+            <tr>
+                <td id="menuTreeTd" style="width:300px; padding:10px;">
+                    <div class="w3-card" style="height:100%;width:100%;">
+                        <tree-grid  v-bind:tree_data="data.treeData" v-bind:on_node_click="nodeClick" v-bind:on_add_node="onAddNode" v-bind:on_delete_node="onDeleteNode" />
+                    </div>
+                </td>
+                <td id="splitTd" style="width:10px;position:relative; left:-5px;">
+                    <img src="img/split.png" style="cursor:pointer" v-on:click="splitClick()" />
+                </td>
+                <td style="padding:10px;padding-left:0;min-width:50%;">
+                    <div id="pageContent" class="w3-card" style="height:100%;width:100%;">
+                        <div style="height:1px;"></div>
+                        <div id="contentEditDiv" style="display: none;">
+                            <div>
+                                <button class="w3-button w3-blue w3-border w3-border-indigo w3-round-large w3-padding-small" v-on:click="saveClick()">保存</button>
+                                <span style="padding-left: 100px" id="updateDate"></span>
+                            </div>
+                            <div class="dataItemTitle">
+                                <div v-for="p in data.currentDataItem.pathHtml" class="path" v-html="p">
+                                </div>
+                                <div class="path" style="margin-left:20px;">
+                                    {{data.currentDataItem.updateDateStr}}
+                                </div>
+                            </div>
+                            <div id="editor" style="height:80%;"></div>
+                        </div>
+                        <div id="recentDataDiv" >
+                            <div v-for="c in data.recentData" class="dataListItem" >
+                                <div class="dataItemTitle">
+                                    <div v-for="p in c.pathHtml" class="path" v-html="p">
+                                    </div>
+                                    <div class="path" style="margin-left:20px;">
+                                        {{c.updateDateStr}}
+                                    </div>
+                                </div>
+                                <div style="padding:10px 10px;overflow:auto;width: 100%">
+                                    <div class="dataListItemHtmlDiv" style="width:500px;overflow:auto;" v-html="c.html">
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="loadingDiv" style="display:none">
+        <table style="width:100%;height:100%">
+            <tr>
+                <td align="center">
+                    <img src="img/loading.gif" style="opacity:1;">
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+<script>
+
+    function showLoading(el){
+        if(el == undefined){
+            $("#loadingDiv").css("left", "0");
+            $("#loadingDiv").css("right", "0");
+            $("#loadingDiv").css("top", "0");
+            $("#loadingDiv").css("bottom", "0");
+            $("#loadingDiv").css("width", "auto");
+            $("#loadingDiv").css("height", "auto");
+        }else{
+            var offset = $(el).offset();
+            var width = $(el).width();
+            var height = $(el).height();
+            $("#loadingDiv").css("left", offset.left + "px");
+            $("#loadingDiv").css("top", offset.top + "px");
+            $("#loadingDiv").css("right", "auto");
+            $("#loadingDiv").css("bottom", "auto");
+            $("#loadingDiv").css("width", width + "px");
+            $("#loadingDiv").css("height", height + "px");
+        }
+        $("#loadingDiv").show();
+    }
+    function hideLoading(){
+        $("#loadingDiv").hide();
+    }
+
+    showLoading();
+
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyAjv30ycfoiuYTRYFVQM-RwPj48iQG1oWM",
+        authDomain: "memosystem1.firebaseapp.com",
+        databaseURL: "https://memosystem1.firebaseio.com",
+        projectId: "memosystem1",
+        storageBucket: "",
+        messagingSenderId: "797681972148"
+    };
+    firebase.initializeApp(config);
+    var database = firebase.database();
+    var db = firebase.firestore();
+
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+    };
+
+    // db.collection("Dict").get().then((querySnapshot) => {
+    //     var dict = [];
+    //     querySnapshot.forEach((doc) => {
+    //         dict.push(doc.id);
+    //     });
+    //     data.Dict = dict;
+    // });
+
+    firebase.database().ref('/MenuDict').once('value').then(function(snapshot) {
+        var obj = snapshot.val();
+        var dictList = [];
+        addDictItem(dictList, obj , "");
+        data.Dict = dictList;
+
+        var targetNode = {title:"root"};
+        makeTreeData(obj, targetNode);
+        data.treeData = targetNode;
+
+        initVue();
+        hideLoading();
+    });
+
+    function makeTreeData(node, targetNode){
+        var n = 0;
+        for(var name in node){
+            if(n == 0){
+                targetNode.children = [];
+                n++;
+            }
+            var childNode = {};
+            childNode.title = name;
+            targetNode.children.push(childNode);
+            makeTreeData(node[name], childNode);
+        }
+    }
+
+    function addDictItem(dictList, obj, path){
+        for(var name in obj){
+            var pathParam = path + "/" + name;
+            dictList.push({text:name, path:pathParam});
+            if(typeof obj[name] === 'object'){
+                addDictItem(dictList, obj[name], pathParam);
+            }
+        }
+    }
+
+    var data = {Dict:[], currentDocId:"", contentHtml:"", currentDataItem:{}, treeData:{}, recentData:[]};
+    // data.treeData = {title:"root", name:"太郎", desc:"マネジャー", children:[
+    //                 {title:"c1", name:"一郎", desc:"開発者", children:[{title:"c11", children:[{title:"c111"}]},{title:"c12"}]},
+    //                 {title:"c2", name:"二郎", desc:"開発者", children:[{title:"c21"}]},
+    //                 {title:"c3", name:"三郎", desc:"開発者", children:[{title:"c31"},{title:"c32"}]},
+    //             ]};
+
+
+
+
+    function initVue(){
+        var v = new Vue({
+            el: '#app',
+            data: {data:data},
+            methods: {
+                initEditor : function(){
+                    if(this.editor == undefined){
+                        $('#editor').summernote({height: $('#pageContent').parent().height()-100});
+                        this.editor = $('#editor');
+                    }
+                },
+                nodeClick : function(node){
+
+                    showLoading($("#pageContent"));
+
+                    var me = this;
+                    var parentList = this.getParentList(node);
+                    
+                    data.currentDocId = "##" + parentList.join("##") + "##" + node.model.title;
+                    
+                    var v = db.collection("Dict").doc(data.currentDocId);
+                    me.initEditor();
+                    $('#editor').summernote('code', "");
+                    v.onSnapshot(function(snap){
+
+                        data.contentHtml = snap.get("html");
+                        $('#editor').summernote('code', data.contentHtml);
+
+                        data.currentDataItem = makeMemoItem(snap);
+                        $("#recentDataDiv").hide();
+                        $("#contentEditDiv").show();
+                        hideLoading();
+                    });
+                },
+                splitClick : function(){
+                    if($("#menuTreeTd:visible").length > 0){
+                        $("#menuTreeTd").hide();
+                        $("#splitTd").css("left", "0");
+                    }else{
+                        $("#menuTreeTd").show();
+                        $("#splitTd").css("left", "-5px");
+                    }
+                },
+                getParentList:function(node){
+                    var l = [];
+                    var currentNode = node;
+                    while(currentNode.parent){
+                        if(currentNode.parent.model.title == "root"){
+                            break;
+                        }
+                        l.push(currentNode.parent.model.title);
+                        currentNode = currentNode.parent;
+                    }
+                    return l.reverse();
+                },
+                saveClick : function(){
+
+                    var content = $('#editor').summernote('code');
+                    db.collection("Dict").doc(data.currentDocId).set({html: content,updateDate:new Date()})
+                    .then(function() {
+                        console.log("Document successfully written!");
+                        alert("save over.")
+                    })
+                    .catch(function(error) {
+                        console.error("Error writing document: ", error);
+                    });
+
+                },
+                onAddNode : function(node, newName){
+
+                    var parentList = this.getParentList(node);
+                    
+                    firebase.database().ref('/MenuDict/' + parentList.join("/") + "/" + newName).set(0, function(error) {
+                        if (error) {
+                        } else {
+                        }
+                    });
+                },
+                onDeleteNode : function(node){
+                    if(!window.confirm("Delete ?")){
+                        return;
+                    }
+                    var parentList = this.getParentList(node);
+                    var path = '/MenuDict/' + parentList.join("/") + "/" + node.model.title;
+
+                    var ref = firebase.database().ref(path);
+                    ref.getParent().once('value').then(function(snapshot) {
+                        var obj = snapshot.val();
+                        var i=0 ;
+
+                        for(var n in obj){
+                            if(i>0){
+                                ref.remove();
+                                return;
+                            }
+                            i++;
+                        }
+                        ref.getParent().set(0);
+                    });
+
+                    var currentDocId = "##" + parentList.join("##") + "##" + node.model.title;
+
+                    db.collection("Dict").doc(currentDocId).delete().then(function() {
+                        console.log("Document successfully deleted!");
+                    }).catch(function(error) {
+                        console.error("Error removing document: ", error);
+                    });
+                }
+            }
+        });
+    }
+
+    function makeMemoItem(doc){
+        var obj = {html:doc.get("html"), 
+                    updateDate : doc.get("updateDate"),
+                    path : doc.id.split("##")};//replaceAll("##" , " -> ")};
+        if(obj.updateDate){
+            obj.updateDateStr = obj.updateDate.getFullYear()  + "/" + (obj.updateDate.getMonth()+1) + "/" + obj.updateDate.getDate() + " " +
+                                obj.updateDate.getHours() + ":" + obj.updateDate.getMinutes();
+        }
+        obj.pathHtml = [];
+
+        for (let i = 0; i < obj.path.length; i++) {
+            const p = obj.path[i];
+            if(p == "") continue;
+            obj.pathHtml.push(p);
+            if(i != obj.path.length -1){
+                obj.pathHtml.push("<img src='img/subIcon.png' style='height:16px;' />");
+            }
+        }
+        return obj
+    }
+
+    function pageInit(){
+        data.recentData = [];
+        recentData = [];
+        db.collection("Dict").orderBy("updateDate","desc").limit(10).get().then(function(doc){
+            for (let i = 0; i < doc.docs.length; i++) {
+                const d = doc.docs[i];
+                recentData.push(makeMemoItem(d));
+            }
+            data.recentData = recentData;
+            setTimeout(resetDataListItemHtmlDivWidth, 1);
+        });
+    }
+
+    function resetDataListItemHtmlDivWidth(){
+        $(".dataListItemHtmlDiv").each(function(){
+            $(this).width($(this).parent().width() - 100);
+        });
+    }
+
+    pageInit();
+    </script>
+</html>
