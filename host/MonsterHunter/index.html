@@ -1,0 +1,108 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		.icons img{
+			width:20%;
+			padding:0;
+			margin:0;
+			border:0;
+			float:left;
+			cursor:pointer;
+		}
+		@media only screen and (min-width: 900px) {
+			.icons img{
+				width:10%;
+				padding:0;
+				margin:0;
+				border:0;
+				float:left;
+				cursor:pointer;
+			}
+		}
+	</style>
+	<script>
+		function c(el){
+			let e = document.getElementById("detail");
+			e.src = "detail/" + el.getAttribute("f");
+			document.getElementById("t").style.display = "table";
+		}
+		function r(){
+			document.getElementById("t").style.display = "none";
+		}
+	</script>
+</head>
+<body style="padding:0;margin:0;">
+<div class="icons" style="padding:0;margin:0;">
+	<img src="1.JPG"  f="1.JPG"  onclick="c(this)"/>
+	<img src="2.JPG"  f="2.JPG"  onclick="c(this)"/>
+	<img src="3.JPG"  f="3.JPG"  onclick="c(this)"/>
+	<img src="4.JPG"  f="4.JPG"  onclick="c(this)"/>
+	<img src="5.JPG"  f="5.JPG"  onclick="c(this)"/>
+	<img src="6.JPG"  f="6.JPG"  onclick="c(this)"/>
+	<img src="7.JPG"  f="7.JPG"  onclick="c(this)"/>
+	<img src="8.JPG"  f="8.JPG"  onclick="c(this)"/>
+	<img src="9.JPG"  f="9.JPG"  onclick="c(this)"/>
+	<img src="10.JPG" f="10.JPG" onclick="c(this)"/>
+	<img src="11.JPG" f="11.JPG" onclick="c(this)"/>
+	<img src="12.JPG" f="12.JPG" onclick="c(this)"/>
+	<img src="13.JPG" f="13.JPG" onclick="c(this)"/>
+	<img src="14.JPG" f="14.JPG" onclick="c(this)"/>
+	<img src="15.JPG" f="15.JPG" onclick="c(this)"/>
+	<img src="16.JPG" f="16.JPG" onclick="c(this)"/>
+	<img src="17.JPG" f="17.JPG" onclick="c(this)"/>
+	<img src="18.JPG" f="18.JPG" onclick="c(this)"/>
+	<img src="19.JPG" f="19.JPG" onclick="c(this)"/>
+	<img src="20.JPG" f="20.JPG" onclick="c(this)"/>
+	<img src="21.JPG" f="21.JPG" onclick="c(this)"/>
+	<img src="22.JPG" f="22.JPG" onclick="c(this)"/>
+	<img src="23.JPG" f="23.JPG" onclick="c(this)"/>
+	<img src="24.JPG" f="24.JPG" onclick="c(this)"/>
+	<img src="25.JPG" f="25.JPG" onclick="c(this)"/>
+	<img src="26.JPG" f="26.JPG" onclick="c(this)"/>
+	<img src="27.JPG" f="27.JPG" onclick="c(this)"/>
+	<img src="28.JPG" f="28.JPG" onclick="c(this)"/>
+	<img src="29.JPG" f="29.JPG" onclick="c(this)"/>
+	<img src="30.JPG" f="30.JPG" onclick="c(this)"/>
+	<img src="31.JPG" f="31.JPG" onclick="c(this)"/>
+	<img src="32.JPG" f="32.JPG" onclick="c(this)"/>
+	<img src="33.JPG" f="33.JPG" onclick="c(this)"/>
+	<img src="34.JPG" f="34.JPG" onclick="c(this)"/>
+	<img src="35.JPG" f="35.JPG" onclick="c(this)"/>
+	<img src="36.JPG" f="36.JPG" onclick="c(this)"/>
+	<img src="37.JPG" f="37.JPG" onclick="c(this)"/>
+	<img src="38.JPG" f="38.JPG" onclick="c(this)"/>
+	<img src="39.JPG" f="39.JPG" onclick="c(this)"/>
+	<img src="40.JPG" f="40.JPG" onclick="c(this)"/>
+	<img src="41.JPG" f="41.JPG" onclick="c(this)"/>
+	<img src="42.JPG" f="42.JPG" onclick="c(this)"/>
+	<img src="43.JPG" f="43.JPG" onclick="c(this)"/>
+	<img src="44.JPG" f="44.JPG" onclick="c(this)"/>
+	<img src="45.JPG" f="45.JPG" onclick="c(this)"/>
+	<img src="46.JPG" f="46.JPG" onclick="c(this)"/>
+	<img src="47.JPG" f="47.JPG" onclick="c(this)"/>
+	<img src="48.JPG" f="48.JPG" onclick="c(this)"/>
+	<img src="49.JPG" f="49.JPG" onclick="c(this)"/>
+	<img src="50.JPG" f="50.JPG" onclick="c(this)"/>
+	<img src="51.JPG" f="51.JPG" onclick="c(this)"/>
+	<img src="52.JPG" f="52.JPG" onclick="c(this)"/>
+	<img src="53.JPG" f="53.JPG" onclick="c(this)"/>
+	<img src="54.JPG" f="54.JPG" onclick="c(this)"/>
+	<img src="55.JPG" f="55.JPG" onclick="c(this)"/>
+	<img src="56.JPG" f="56.JPG" onclick="c(this)"/>
+	<img src="57.JPG" f="57.JPG" onclick="c(this)"/>
+	<img src="58.JPG" f="58.JPG" onclick="c(this)"/>
+	<img src="59.JPG" f="59.JPG" onclick="c(this)"/>
+	<img src="60.JPG" f="60.JPG" onclick="c(this)"/>
+	<img src="61.JPG" f="61.JPG" onclick="c(this)"/>
+	<img src="62.JPG" f="62.JPG" onclick="c(this)"/>
+</div>
+<table id="t" style="position:fixed;width:100%;height:100%;background:black;display:none;">
+	<tr>
+		<td>
+			<img id="detail" src="detail/2.JPG" style="width:100%;" onclick="r()" />
+		</td>
+	</tr>
+</table>
+</body>
+</html>
